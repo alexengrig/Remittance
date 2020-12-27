@@ -15,5 +15,7 @@ public class SimpleMoneyTransferService extends BaseMoneyTransferService {
     protected void doTransfer(Account from, Account to, long amount) {
         from.setBalance(from.getBalance() - amount);
         to.setBalance(to.getBalance() + amount);
+        accountRepository.save(from);
+        accountRepository.save(to);
     }
 }

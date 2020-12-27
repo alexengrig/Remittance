@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SimpleMoneyTransferServiceTest implements MockitoAnnotationTest {
@@ -42,6 +44,8 @@ class SimpleMoneyTransferServiceTest implements MockitoAnnotationTest {
         assertEquals(2L, to.getId(), "The account id is incorrect");
         assertEquals(250, from.getBalance(), "The account balance is incorrect");
         assertEquals(750, to.getBalance(), "The account balance is incorrect");
+        verify(accountRepository).save(eq(from));
+        verify(accountRepository).save(eq(to));
     }
 
     @Test
@@ -56,5 +60,9 @@ class SimpleMoneyTransferServiceTest implements MockitoAnnotationTest {
         assertEquals(2L, to.getId(), "The account id is incorrect");
         assertEquals(250, from.getBalance(), "The account balance is incorrect");
         assertEquals(750, to.getBalance(), "The account balance is incorrect");
+        verify(accountRepository).findById(eq(from.getId()));
+        verify(accountRepository).findById(eq(to.getId()));
+        verify(accountRepository).save(eq(from));
+        verify(accountRepository).save(eq(to));
     }
 }

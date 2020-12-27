@@ -11,7 +11,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public abstract class BaseMoneyTransferService implements MoneyTransferService {
 
-    private final AccountRepository accountRepository;
+    protected final AccountRepository accountRepository;
 
     @Override
     public void transfer(long fromId, long toId, long amount) {
