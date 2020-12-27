@@ -2,6 +2,7 @@ package dev.alexengrig.remittance.service;
 
 import dev.alexengrig.remittance.MockitoAnnotationTest;
 import dev.alexengrig.remittance.domain.Account;
+import dev.alexengrig.remittance.exception.InsufficientFundsException;
 import dev.alexengrig.remittance.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,6 +11,7 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,5 +66,40 @@ class SimpleMoneyTransferServiceTest implements MockitoAnnotationTest {
         verify(accountRepository).findById(eq(to.getId()));
         verify(accountRepository).save(eq(from));
         verify(accountRepository).save(eq(to));
+    }
+
+    @Test
+    void should_throws_NPE_for_sender_on_transfer_money_for_accounts() {
+        NullPointerException npe = assertThrows(NullPointerException.class,
+                () -> moneyTransferService.transfer(null, new Account(0L, 0), 0));
+        assertEquals("The sender account must not be null", npe.getMessage(), "The exception message is incorrect");
+    }
+
+    @Test
+    void should_throws_NPE_for_recipient_on_transfer_money_for_accounts() {
+        NullPointerException npe = assertThrows(NullPointerException.class,
+                () -> moneyTransferService.transfer(new Account(0L, 0), null, 0));
+        assertEquals("The recipient account must not be null", npe.getMessage(), "The exception message is incorrect");
+    }
+
+    @Test
+    void should_throws_IAE_for_sameAccount_on_transfer_money_for_accounts() {
+        IllegalArgumentException npe = assertThrows(IllegalArgumentException.class,
+                () -> moneyTransferService.transfer(new Account(0L, 0), new Account(0L, 0), 0));
+        assertEquals("The same account: 0", npe.getMessage(), "The exception message is incorrect");
+    }
+
+    @Test
+    void should_throws_IAE_for_zeroAmount_on_transfer_money_for_accounts() {
+        IllegalArgumentException npe = assertThrows(IllegalArgumentException.class,
+                () -> moneyTransferService.transfer(new Account(1L, 1), new Account(2L, 2), 0));
+        assertEquals("The amount must be positive and greater than zero: 0", npe.getMessage(),
+                "The exception message is incorrect");
+    }
+
+    @Test
+    void should_throws_IFE_on_transfer_money_for_accounts() {
+        assertThrows(InsufficientFundsException.class,
+                () -> moneyTransferService.transfer(new Account(1L, 1), new Account(2L, 2), 2));
     }
 }
