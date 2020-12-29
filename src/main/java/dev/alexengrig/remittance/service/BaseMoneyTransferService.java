@@ -21,6 +21,8 @@ public abstract class BaseMoneyTransferService implements MoneyTransferService {
         Account to = accountRepository.findById(toId).orElseThrow(NotFoundAccountException::new);
         requireSufficientFunds(from, amount);
         doTransfer(from, to, amount);
+        accountRepository.update(from);
+        accountRepository.update(to);
     }
 
     @Override
@@ -31,6 +33,8 @@ public abstract class BaseMoneyTransferService implements MoneyTransferService {
         requireValidAmount(amount);
         requireSufficientFunds(from, amount);
         doTransfer(from, to, amount);
+        accountRepository.update(from);
+        accountRepository.update(to);
     }
 
     protected abstract void doTransfer(Account from, Account to, long amount);

@@ -1,11 +1,11 @@
 package dev.alexengrig.remittance.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+public interface Account {
+    long getId();
 
-@Data
-@AllArgsConstructor
-public class Account {
-    private Long id;
-    private long balance;
+    long getBalance();
+
+    void deposit(long amount);
+
+    void withdraw(long amount);
 }

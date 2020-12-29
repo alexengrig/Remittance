@@ -8,5 +8,5 @@ public interface AccountRepository {
 
     Optional<Account> findById(long accountId);
 
-    Account save(Account account);
+    void update(Account account);
 }
