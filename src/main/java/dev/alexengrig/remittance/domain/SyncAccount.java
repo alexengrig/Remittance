@@ -1,19 +1,18 @@
 package dev.alexengrig.remittance.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
-@Data
-@AllArgsConstructor
-public class SyncAccount implements Account {
+public class SyncAccount extends BaseAccount {
 
-    @Getter(AccessLevel.NONE)
     private final Object balanceLock = new Object();
 
-    private final long id;
+    @Getter
     private volatile long balance;
+
+    public SyncAccount(long id, long balance) {
+        super(id);
+        this.balance = balance;
+    }
 
     @Override
     public void deposit(long amount) {

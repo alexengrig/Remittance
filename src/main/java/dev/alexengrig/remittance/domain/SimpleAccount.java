@@ -1,13 +1,16 @@
 package dev.alexengrig.remittance.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
-public class SimpleAccount implements Account {
-    private final long id;
+public class SimpleAccount extends BaseAccount {
+
+    @Getter
     private long balance;
+
+    public SimpleAccount(long id, long balance) {
+        super(id);
+        this.balance = balance;
+    }
 
     @Override
     public void deposit(long amount) {

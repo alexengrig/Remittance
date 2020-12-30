@@ -1,6 +1,7 @@
 package dev.alexengrig.remittance.domain;
 
 public interface Account {
+
     long getId();
 
     long getBalance();

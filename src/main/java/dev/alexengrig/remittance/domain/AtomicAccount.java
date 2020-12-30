@@ -1,16 +1,13 @@
 package dev.alexengrig.remittance.domain;
 
-import lombok.Getter;
-
 import java.util.concurrent.atomic.AtomicLong;
 
-public class AtomicAccount implements Account {
-    @Getter
-    private final long id;
+public class AtomicAccount extends BaseAccount {
+
     private final AtomicLong balance;
 
     public AtomicAccount(long id, long balance) {
-        this.id = id;
+        super(id);
         this.balance = new AtomicLong(balance);
     }
 
