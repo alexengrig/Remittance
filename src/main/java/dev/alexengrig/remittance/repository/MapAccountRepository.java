@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class MapAccountRepository implements InMemoryAccountRepository {
+public abstract class MapAccountRepository extends InMemoryAccountRepository {
 
     private final String filename;
     private final Converter<Account, AccountPayload> accountPayloadConverter;
@@ -42,7 +42,7 @@ public abstract class MapAccountRepository implements InMemoryAccountRepository 
                     .map(this::mapToAccount)
                     .collect(Collectors.toMap(Account::getId, Function.identity())));
         } catch (IOException | ClassNotFoundException e) {
-            throw new IllegalStateException("Failed to pull data", e);
+            throw new IllegalStateException("Failed to pull data from file: " + filename, e);
         }
     }
 
@@ -55,7 +55,7 @@ public abstract class MapAccountRepository implements InMemoryAccountRepository 
                     .collect(Collectors.toList());
             output.writeObject(accounts);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to push data", e);
+            throw new IllegalStateException("Failed to push data from file: " + filename, e);
         }
     }
 

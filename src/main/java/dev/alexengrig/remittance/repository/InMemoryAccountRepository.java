@@ -3,11 +3,11 @@ package dev.alexengrig.remittance.repository;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-public interface InMemoryAccountRepository extends AccountRepository {
+public abstract class InMemoryAccountRepository implements AccountRepository {
 
     @PostConstruct
-    void pullData();
+    protected abstract void pullData();
 
     @PreDestroy
-    void pushData();
+    protected abstract void pushData();
 }
