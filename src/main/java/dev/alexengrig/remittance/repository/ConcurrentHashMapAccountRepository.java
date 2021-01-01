@@ -16,7 +16,7 @@ public class ConcurrentHashMapAccountRepository extends MapAccountRepository {
     private final Converter<AccountPayload, AtomicAccount> atomicAccountConverter;
 
     public ConcurrentHashMapAccountRepository(
-            @Value("{application.data.filename:data.ser}") String filename,
+            @Value("${application.data.filename:data.ser}") String filename,
             Converter<Account, AccountPayload> accountPayloadConverter,
             Converter<AccountPayload, AtomicAccount> atomicAccountConverter) {
         super(filename, accountPayloadConverter);
