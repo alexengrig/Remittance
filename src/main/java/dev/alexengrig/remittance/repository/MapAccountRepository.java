@@ -2,15 +2,11 @@ package dev.alexengrig.remittance.repository;
 
 import dev.alexengrig.remittance.domain.Account;
 import dev.alexengrig.remittance.payload.AccountPayload;
+import dev.alexengrig.remittance.util.SerializationUtil;
 import org.springframework.core.convert.converter.Converter;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -34,10 +30,8 @@ public abstract class MapAccountRepository extends InMemoryAccountRepository {
 
     @Override
     public void pullData() {
-        Path path = Paths.get(filename);
-        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(path))) {
-            @SuppressWarnings("unchecked")
-            Collection<AccountPayload> payloads = (Collection<AccountPayload>) input.readObject();
+        try {
+            ArrayList<AccountPayload> payloads = SerializationUtil.deserializeFromFile(filename);
             accountById.putAll(payloads.stream()
                     .map(this::mapToAccount)
                     .collect(Collectors.toMap(Account::getId, Function.identity())));
@@ -48,14 +42,13 @@ public abstract class MapAccountRepository extends InMemoryAccountRepository {
 
     @Override
     public void pushData() {
-        Path path = Paths.get(filename);
-        try (ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(path))) {
-            Collection<AccountPayload> accounts = accountById.values().stream()
+        try {
+            ArrayList<AccountPayload> payloads = accountById.values().stream()
                     .map(accountPayloadConverter::convert)
-                    .collect(Collectors.toList());
-            output.writeObject(accounts);
+                    .collect(Collectors.toCollection(ArrayList::new));
+            SerializationUtil.serializeToFile(payloads, filename);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to push data from file: " + filename, e);
+            throw new IllegalStateException("Failed to push data to file: " + filename, e);
         }
     }
 
