@@ -1,4 +1,4 @@
-package dev.alexengrig.remittance.service;
+package dev.alexengrig.remittance.service.lock;
 
 import java.util.concurrent.locks.Lock;
 

@@ -1,4 +1,4 @@
-package dev.alexengrig.remittance.service;
+package dev.alexengrig.remittance.service.lock;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

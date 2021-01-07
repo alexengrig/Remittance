@@ -1,7 +1,8 @@
-package dev.alexengrig.remittance.service;
+package dev.alexengrig.remittance.service.moneytransfer;
 
 import dev.alexengrig.remittance.domain.Account;
 import dev.alexengrig.remittance.repository.AccountRepository;
+import dev.alexengrig.remittance.service.lock.LockService;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 

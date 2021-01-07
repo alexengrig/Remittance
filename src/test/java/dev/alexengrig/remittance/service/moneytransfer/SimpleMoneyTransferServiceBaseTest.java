@@ -1,4 +1,4 @@
-package dev.alexengrig.remittance.service;
+package dev.alexengrig.remittance.service.moneytransfer;
 
 import dev.alexengrig.remittance.MockitoAnnotationTest;
 import dev.alexengrig.remittance.repository.AccountRepository;
