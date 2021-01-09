@@ -6,12 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -73,29 +70,5 @@ public class SimpleMoneyTransferServiceConcurrentTest extends SimpleMoneyTransfe
         assertEquals(0, account2.getBalance(), "The account2 balance is incorrect");
         assertEquals(0, account3.getBalance(), "The account3 balance is incorrect");
         assertEquals(600, account4.getBalance(), "The account4 balance is incorrect");
-    }
-
-    static class Balancer {
-        private final List<AtomicLong> balances;
-
-        static Balancer of(List<Account> accounts) {
-            return new Balancer(accounts.stream()
-                    .map(Account::getBalance)
-                    .map(AtomicLong::new)
-                    .collect(Collectors.toList()));
-        }
-
-        private Balancer(List<AtomicLong> balances) {
-            this.balances = new CopyOnWriteArrayList<>(balances);
-        }
-
-        void move(int from, int to, long amount) {
-            balances.get(from).addAndGet(-amount);
-            balances.get(to).addAndGet(amount);
-        }
-
-        long get(int index) {
-            return balances.get(index).get();
-        }
     }
 }
