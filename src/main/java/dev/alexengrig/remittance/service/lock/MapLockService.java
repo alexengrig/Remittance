@@ -1,6 +1,8 @@
 package dev.alexengrig.remittance.service.lock;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -8,10 +10,12 @@ import java.util.concurrent.locks.Lock;
 
 public class MapLockService extends InMemoryLockService {
 
+    private final Duration lockLiveDuration;
     private final Map<Object, Lock> locks;
     private final Map<Object, LocalDateTime> requestTimes;
 
     public MapLockService() {
+        lockLiveDuration = Duration.of(60, ChronoUnit.SECONDS);
         locks = createLocksMap();
         requestTimes = createRequestTimesMap();
     }
@@ -42,5 +46,15 @@ public class MapLockService extends InMemoryLockService {
     @Override
     protected void idle() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(150);
+    }
+
+    @Override
+    public void shrink() {
+        LocalDateTime now = LocalDateTime.now();
+        requestTimes.forEach((key, dateTime) -> {
+            if (Duration.between(dateTime, now).compareTo(lockLiveDuration) > 0) {
+                locks.remove(key);
+            }
+        });
     }
 }

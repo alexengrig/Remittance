@@ -47,4 +47,6 @@ public abstract class InMemoryLockService implements LockService {
     protected abstract void updateRequestTime(Object key, Lock lock);
 
     protected abstract void idle() throws InterruptedException;
+
+    public abstract void shrink();
 }
