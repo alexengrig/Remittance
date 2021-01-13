@@ -14,8 +14,8 @@ public class MapLockService extends InMemoryLockService {
     private final Map<Object, Lock> locks;
     private final Map<Object, LocalDateTime> requestTimes;
 
-    public MapLockService() {
-        lockLiveDuration = Duration.of(60, ChronoUnit.SECONDS);
+    public MapLockService(int seconds) {
+        lockLiveDuration = Duration.of(seconds, ChronoUnit.SECONDS);
         locks = createLocksMap();
         requestTimes = createRequestTimesMap();
     }
@@ -52,9 +52,14 @@ public class MapLockService extends InMemoryLockService {
     public void shrink() {
         LocalDateTime now = LocalDateTime.now();
         requestTimes.forEach((key, dateTime) -> {
-            if (Duration.between(dateTime, now).compareTo(lockLiveDuration) > 0) {
+            if (Duration.between(dateTime, now).compareTo(lockLiveDuration) >= 0) {
+                requestTimes.remove(key);
                 locks.remove(key);
             }
         });
+    }
+
+    public int getNumberOfLocks() {
+        return locks.size();
     }
 }

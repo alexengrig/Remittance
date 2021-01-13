@@ -14,7 +14,7 @@ class MapLockServiceTest {
 
     @Test
     void should_runInLocks_incAndDec() throws InterruptedException {
-        LockService lockService = new MapLockService();
+        LockService lockService = new MapLockService(0);
         class Number {
             final long id;
             long value;
@@ -53,5 +53,20 @@ class MapLockServiceTest {
         assertEquals(expected, number0.value);
         assertEquals(expected, number1.value);
         assertEquals(expected, number2.value);
+    }
+
+    @Test
+    void should_shrink() throws InterruptedException {
+        MapLockService mapLockService = new MapLockService(0);
+        Runnable doNothing = () -> {
+        };
+        mapLockService.runWithLock(1, 2, doNothing);
+        mapLockService.runWithLock(3, 4, doNothing);
+        assertEquals(4, mapLockService.getNumberOfLocks());
+        mapLockService.shrink();
+        assertEquals(0, mapLockService.getNumberOfLocks());
+        mapLockService.runWithLock(1, 2, doNothing);
+        mapLockService.runWithLock(3, 4, doNothing);
+        assertEquals(4, mapLockService.getNumberOfLocks());
     }
 }
