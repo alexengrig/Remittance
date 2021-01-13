@@ -69,4 +69,15 @@ class MapLockServiceTest {
         mapLockService.runWithLock(3, 4, doNothing);
         assertEquals(4, mapLockService.getNumberOfLocks());
     }
+
+    @Test
+    void should_not_shrink() throws InterruptedException {
+        MapLockService mapLockService = new MapLockService(60);
+        Runnable doNothing = () -> {
+        };
+        mapLockService.runWithLock(1, 2, doNothing);
+        assertEquals(2, mapLockService.getNumberOfLocks());
+        mapLockService.shrink();
+        assertEquals(2, mapLockService.getNumberOfLocks());
+    }
 }
