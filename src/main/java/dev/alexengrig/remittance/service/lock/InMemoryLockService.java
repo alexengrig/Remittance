@@ -1,12 +1,14 @@
 package dev.alexengrig.remittance.service.lock;
 
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class InMemoryLockService implements LockService {
 
     @Override
-    public <T> void runWithLock(T left, T right, Runnable runnable) throws InterruptedException {
+    public void runWithLock(Object left, Object right, Runnable runnable) throws InterruptedException {
+        requireDifferent(left, right);
         Lock leftLock = obtainLock(left);
         Lock rightLock = obtainLock(right);
         while (true) {
@@ -23,6 +25,12 @@ public abstract class InMemoryLockService implements LockService {
         } finally {
             leftLock.unlock();
             rightLock.unlock();
+        }
+    }
+
+    private void requireDifferent(Object left, Object right) {
+        if (Objects.equals(left, right)) {
+            throw new IllegalArgumentException("Equal objects: " + left + " = " + right);
         }
     }
 

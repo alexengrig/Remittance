@@ -1,6 +1,7 @@
 package dev.alexengrig.remittance.service.lock;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,9 +9,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class MapLockServiceTest {
+
+    private static final Runnable DO_NOTHING = () -> {
+    };
 
     @Test
     void should_runInLocks_incAndDec() throws InterruptedException {
@@ -58,26 +63,30 @@ class MapLockServiceTest {
     @Test
     void should_shrink() throws InterruptedException {
         MapLockService mapLockService = new MapLockService(0);
-        Runnable doNothing = () -> {
-        };
-        mapLockService.runWithLock(1, 2, doNothing);
-        mapLockService.runWithLock(3, 4, doNothing);
+        mapLockService.runWithLock(1, 2, DO_NOTHING);
+        mapLockService.runWithLock(3, 4, DO_NOTHING);
         assertEquals(4, mapLockService.getNumberOfLocks());
         mapLockService.shrink();
         assertEquals(0, mapLockService.getNumberOfLocks());
-        mapLockService.runWithLock(1, 2, doNothing);
-        mapLockService.runWithLock(3, 4, doNothing);
+        mapLockService.runWithLock(1, 2, DO_NOTHING);
+        mapLockService.runWithLock(3, 4, DO_NOTHING);
         assertEquals(4, mapLockService.getNumberOfLocks());
     }
 
     @Test
     void should_not_shrink() throws InterruptedException {
         MapLockService mapLockService = new MapLockService(60);
-        Runnable doNothing = () -> {
-        };
-        mapLockService.runWithLock(1, 2, doNothing);
+        mapLockService.runWithLock(1, 2, DO_NOTHING);
         assertEquals(2, mapLockService.getNumberOfLocks());
         mapLockService.shrink();
         assertEquals(2, mapLockService.getNumberOfLocks());
+    }
+
+    @Test
+    void should_throw_illegalArgument_for_equalKeys() {
+        MapLockService mapLockService = new MapLockService(0);
+        Executable task = () -> mapLockService.runWithLock(1, 1, DO_NOTHING);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, task);
+        assertEquals("Equal objects: 1 = 1", exception.getMessage());
     }
 }

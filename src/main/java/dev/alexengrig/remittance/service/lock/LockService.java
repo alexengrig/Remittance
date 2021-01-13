@@ -2,5 +2,5 @@ package dev.alexengrig.remittance.service.lock;
 
 public interface LockService {
 
-    <T> void runWithLock(T left, T right, Runnable runnable) throws InterruptedException;
+    void runWithLock(Object left, Object right, Runnable runnable) throws InterruptedException;
 }
