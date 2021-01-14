@@ -56,5 +56,7 @@ public abstract class InMemoryLockService implements LockService {
 
     protected abstract void idle() throws InterruptedException;
 
-    public abstract void shrink();
+    protected abstract void shrink();
+
+    protected abstract int getNumberOfLocks();
 }

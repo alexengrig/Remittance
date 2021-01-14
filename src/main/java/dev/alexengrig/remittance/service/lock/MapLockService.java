@@ -49,7 +49,7 @@ public class MapLockService extends InMemoryLockService {
     }
 
     @Override
-    public void shrink() {
+    protected void shrink() {
         LocalDateTime now = LocalDateTime.now();
         requestTimes.forEach((key, dateTime) -> {
             if (Duration.between(dateTime, now).compareTo(lockLiveDuration) >= 0) {
@@ -59,7 +59,8 @@ public class MapLockService extends InMemoryLockService {
         });
     }
 
-    public int getNumberOfLocks() {
+    @Override
+    protected int getNumberOfLocks() {
         return locks.size();
     }
 }
